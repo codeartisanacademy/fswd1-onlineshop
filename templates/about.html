@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+    About
+{% endblock title %}
+
+
+
+{% block content %}
+    <div>
+        <h1>About - {{ counter }}</h1>
+        <a href="{% url 'home' %}">Home</a>
+    </div>
+
+{% endblock content %}
+    
