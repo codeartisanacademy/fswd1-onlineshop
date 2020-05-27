@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
+from django.shortcuts import HttpResponseRedirect, reverse
 
 # Create your views here.
 class HomeView(TemplateView):
     template_name= 'home.html'
 
     def get(self, request):
+        
         counter = 0
         if 'counter_session' in request.session:
             counter = request.session['counter_session'] + 1
