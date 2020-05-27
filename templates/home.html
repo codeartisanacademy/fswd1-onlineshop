@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load humanize %}
 
 {% block title %}
     Home
@@ -8,9 +8,36 @@
 
 
 {% block content %}
-    <div>
-        <h1>Home - {{counter}}</h1>
-        <a href="{% url 'about' %}">About</a>
+<h2>All Products</h2>
+
+{% if object_list %}
+<div class="row mt-4">
+    
+        {% for obj in  object_list %}
+        <div class="col-4">
+            <div class="card">
+                <img src="/media/{{obj.main_image.image}}" class="p-2 card-img-top" alt="">
+                <div class="card-body">
+                    <h4 class="card-title"><a href="{% url 'product-detail' obj.id %}">{{obj.name}}</a></h4>
+                    <p class="card-text">
+                        {{obj.description|truncatechars:100}}
+                    </p>
+                    <p>
+                        IDR. {{obj.price|intcomma}}
+                    </p>
+                    
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    
+</div>
+{% else %}
+<div class="row">
+    <div class="col">
+        <p>You don't have any products yet.</p>
     </div>
+</div>
+{% endif %}
 {% endblock content %}
     

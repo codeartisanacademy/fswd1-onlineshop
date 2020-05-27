@@ -16,14 +16,20 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from onlineshopapp import views
-
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.HomeView.as_view(), name='home' ),
     path('about/', views.AboutView.as_view(), name='about' ),
     path('accounts/', include('django.contrib.auth.urls')),
-]
+    path('products/<int:pk>', views.ProductDetailView.as_view(), name='product-detail' ),
+    path('cart/added/<int:id>', views.AddedToCartView.as_view(), name='cart-added'),
+    path('cart/', views.ShoppingCartView.as_view(), name='cart'),
+
+
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # 127.0.0.1/admin/
 # 127.0.0.1/

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% block breadcrumbs %}
+    
+{% endblock %}
+
+{% block content %}
+
+<h2>Your Shopping Cart</h2>
+<div class="row my-4">
+    <div class="col-6">
+        
+        {% if products_in_cart %}
+            {% for product in products_in_cart  %}
+                <div class="mb-4 py-4 border-bottom">
+                    <h4>{{product.name}}</h4>
+                    <p>{{product.price}}</p>
+                    <a href="#" class="btn btn-secondary">Remove</a>
+                    
+                </div>
+
+            {% endfor %}
+        {% else %}
+                <p>You don't have anything in your cart.</p>
+        {% endif %}
+            
+        
+            
+    </div>
+
+    <div class="col-6 text-right">
+        <a href="#" class="btn btn-primary">Check Out</a>
+    </div>
+</div>
+
+{% endblock %}
