@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% block breadcrumbs %}
+    
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-8">
+        <h3>Check Out</h3>
+
+    </div>
+    <div class="col-4">
+        <div class="card">
+            <div class="card-body">
+                <h4>Cart Summary</h4>
+                
+                {% if products %}
+                <ul>
+                    
+                    {% for p in products  %}
+                        <li>
+                            <h6>{{p}}</h6>
+                            {{p.price|intcomma}}
+                        </li>
+                    {% endfor %}
+                        
+                </ul>
+                <p class="text-right">
+                    Total: {{total_price|intcomma}}
+                </p>
+                {% else %}
+                <p>
+                    You don't have any products in cart
+                </p>
+                {% endif %}
+                    
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

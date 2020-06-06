@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, ListView, DetailView
 from django.shortcuts import HttpResponseRedirect, reverse
+from django.contrib import messages
 
 from .models import Product
 
@@ -40,6 +41,10 @@ class ProductDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["cart"] = count_total_items(self.request) 
+
+        related_products = Product.objects.filter(category = 1)
+        context["related_products"] = related_products
+
         return context
     
 
@@ -79,3 +84,40 @@ class ShoppingCartView(TemplateView):
                 products.append(Product.objects.get(id=item['id']))
         
         return render(request, self.template_name, {'products_in_cart':products, 'cart':count_total_items(request)})       
+
+
+class RemoveFromCartView(TemplateView):
+    template_name = 'cart/remove.html'
+    id = None
+
+    def get(self, request, id):
+        products_in_cart = []
+
+        if 'cart' in request.session:
+            try:
+                products_in_cart = request.session['cart']
+                del products_in_cart[id]
+                request.session['cart'] = products_in_cart
+                messages.success(request, "Berhasil dihapus")
+
+            except Exception as error:
+                messages.error(request, "Ada masalah menghapus cart")
+
+        
+        return HttpResponseRedirect(reverse('cart'))
+
+
+class CheckOutView(TemplateView):
+    template_name = 'cart/checkout.html'
+
+    def get(self, request):
+        products_in_cart = []
+        total_price = 0
+        
+        if 'cart' in request.session:
+            for p in request.session['cart']:
+                product = Product.objects.get(id=p['id'])
+                products_in_cart.append(product)
+                total_price += product.price
+
+        return render(request, self.template_name, {'products': products_in_cart, 'cart':count_total_items(request), 'total_price': total_price})

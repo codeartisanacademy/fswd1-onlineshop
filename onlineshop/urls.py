@@ -27,7 +27,8 @@ urlpatterns = [
     path('products/<int:pk>', views.ProductDetailView.as_view(), name='product-detail' ),
     path('cart/added/<int:id>', views.AddedToCartView.as_view(), name='cart-added'),
     path('cart/', views.ShoppingCartView.as_view(), name='cart'),
-
+    path('cart/remove/<int:id>', views.RemoveFromCartView.as_view(), name='cart-remove-item'),
+    path('checkout/', views.CheckOutView.as_view(), name='checkout'),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
