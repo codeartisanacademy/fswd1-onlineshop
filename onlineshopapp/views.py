@@ -2,6 +2,10 @@ from django.shortcuts import render
 from django.views.generic import TemplateView, ListView, DetailView
 from django.shortcuts import HttpResponseRedirect, reverse
 from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
+from .forms import RegistrationForm
+from django.core.mail import send_mail
+from django.conf import settings
 
 from .models import Product
 
@@ -15,7 +19,7 @@ def count_total_items(request):
 class HomeView(ListView):
     template_name= 'home.html'
     model = Product
-    
+    paginate_by = 3
     # menambahkan context dalam ListView
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -37,17 +41,16 @@ class AboutView(TemplateView):
 class ProductDetailView(DetailView):
     model = Product
     template_name = 'products/product-detail.html'
+    
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["cart"] = count_total_items(self.request) 
 
-        related_products = Product.objects.filter(category = 1)
+        related_products = Product.objects.filter(category = self.object.category)
         context["related_products"] = related_products
 
         return context
-    
-
 
 class AddedToCartView(TemplateView):
     template_name="cart/added.html"
@@ -113,11 +116,21 @@ class CheckOutView(TemplateView):
     def get(self, request):
         products_in_cart = []
         total_price = 0
-        
+        form = RegistrationForm()
+
         if 'cart' in request.session:
             for p in request.session['cart']:
                 product = Product.objects.get(id=p['id'])
                 products_in_cart.append(product)
                 total_price += product.price
 
-        return render(request, self.template_name, {'products': products_in_cart, 'cart':count_total_items(request), 'total_price': total_price})
+        return render(request, self.template_name, {'products': products_in_cart, 'cart':count_total_items(request), 'total_price': total_price, 'form':form})
+    
+    def post(self, request):
+        to = request.User.email
+        sender = settings.EMAIL_FROM
+        message = "Your oder has been completed"
+        send_mail('order completed', message, sender, [to], fail_silently=False)
+        return render(request, self.template_name)
+
+
